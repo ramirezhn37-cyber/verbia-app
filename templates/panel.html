@@ -1,0 +1,143 @@
+{% extends "base.html" %}
+
+{% block title %}Verbai | Mi espacio{% endblock %}
+
+{% block content %}
+<div class="dashboard-shell">
+    <aside class="dashboard-sidebar" id="dashboard-sidebar">
+        <a class="dashboard-brand" href="{{ url_for('landing') }}" aria-label="Inicio de Verbai">
+            <img src="{{ url_for('static', filename='img/logo.svg') }}" alt="Verbai">
+        </a>
+        <nav class="dashboard-nav" aria-label="Navegacion del estudiante">
+            <a class="dashboard-link is-active" href="#escenarios"><span class="nav-mark">+</span> Practicar</a>
+            <a class="dashboard-link" href="{{ url_for('history') }}#progreso"><span class="nav-mark">↗</span> Mi progreso</a>
+            <a class="dashboard-link" href="{{ url_for('history') }}#sesiones"><span class="nav-mark">≡</span> Historial</a>
+        </nav>
+        <div class="sidebar-bottom">
+            <a class="dashboard-link" href="{{ url_for('settings') }}"><span class="nav-mark">⚙</span> Ajustes</a>
+            <div class="sidebar-profile">
+                <div class="avatar-status-ring">
+                    {% if user and user.avatar_url %}
+                    <img class="profile-avatar" src="{{ user.avatar_url }}" alt="{{ user.name }}" onerror="this.style.display='none'; this.nextElementSibling.style.display='grid';">
+                    {% endif %}
+                    <span class="avatar-fallback avatar-fallback-{{ user.avatar_style if user else 'default' }}" aria-hidden="true">{{ user.name[:1]|upper if user else 'E' }}</span>
+                    <span class="avatar-status avatar-status-{{ user.status if user else 'active' }}" aria-label="Estado: {{ 'activo' if user and user.status == 'active' else 'inactivo' }}">
+                        <svg viewBox="0 0 16 16" aria-hidden="true"><path d="m3.5 8.2 2.7 2.7 6.3-6.3" /></svg>
+                    </span>
+                </div>
+                <div><strong>{{ user.name if user else session.get('user_name', 'Estudiante') }}</strong><span>Estudiante</span></div>
+                <span class="profile-more">···</span>
+            </div>
+        </div>
+    </aside>
+
+    <main class="dashboard-main" id="escenarios">
+        <header class="dashboard-header">
+            <button class="dashboard-menu" type="button" data-dashboard-menu aria-label="Abrir navegacion" aria-expanded="false">☰</button>
+            <div class="dashboard-header-actions">
+                <button class="theme-toggle" type="button" data-theme-toggle aria-label="Activar modo oscuro" aria-pressed="false">
+                    <span class="theme-icon theme-icon-sun" aria-hidden="true">☼</span>
+                    <span class="theme-icon theme-icon-moon" aria-hidden="true">◐</span>
+                </button>
+                <button class="notification-button" type="button" aria-label="Ver notificaciones"><span></span>♢</button>
+            </div>
+        </header>
+
+        <section class="dashboard-welcome reveal" aria-labelledby="dashboard-title">
+            <div>
+                <p class="eyebrow"><span class="eyebrow-dot"></span> Tu espacio de práctica</p>
+                <h1 id="dashboard-title">Hola, {{ session.get('user_name', 'estudiante') }}<span>.</span></h1>
+                <p class="dashboard-subtitle">Elige un reto y practica cómo expresar tus ideas con confianza.</p>
+            </div>
+            <a class="dashboard-start" href="#lista-escenarios"><span class="dashboard-start-mark" aria-hidden="true">↓</span><span><strong>Explorar retos</strong><small>Hay una práctica para cada ocasión</small></span></a>
+        </section>
+
+        <section class="panel-mascot-card reveal" aria-label="Mensaje de tu coach">
+            <div class="panel-mascot-copy">
+                <p class="eyebrow"><span class="eyebrow-dot"></span> Un consejo de Verbo</p>
+                <h2>Habla a tu ritmo. Cada intento te ayuda a avanzar.</h2>
+                <span>Elige un escenario para comenzar cuando quieras.</span>
+            </div>
+            <div class="panel-mascot-figure" data-verbo-stage>
+                <img class="verbo-image" src="{{ url_for('static', filename='img/verbo.svg') }}" alt="Verbo saludando">
+                <svg class="verbo-image verbo-legacy" aria-hidden="true" viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <filter id="soft-shadow-panel" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="0" dy="10" stdDeviation="12" flood-color="#1E1B4B" flood-opacity="0.15"/></filter>
+                        <filter id="eye-shadow-panel" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="4" stdDeviation="5" flood-color="#1E1B4B" flood-opacity="0.10"/></filter>
+                    </defs>
+                    <g id="verbai-mascot-panel">
+                        <path d="M 215 420 Q 180 435 190 465 Q 205 480 225 450 Z" fill="#FF6B6B" filter="url(#soft-shadow-panel)"/>
+                        <path d="M 585 410 C 625 365 650 380 635 415 C 620 445 575 440 575 430 Z" fill="#FF6B6B" filter="url(#soft-shadow-panel)"/>
+                        <circle cx="400" cy="400" r="190" fill="#FF6B6B" filter="url(#soft-shadow-panel)"/>
+                        <path d="M 220 440 A 190 190 0 0 0 580 440 A 190 190 0 0 1 220 440 Z" fill="#1E1B4B" opacity="0.08"/>
+                        <path d="M 264 267 Q 396 204 542 258 L 535 279 Q 398 230 272 286 Z" fill="#F4B544" stroke="#1E1B4B" stroke-width="9" stroke-linejoin="round"/>
+                        <g transform="rotate(-14 401 195)" filter="url(#soft-shadow-panel)">
+                            <path d="M 290 184 L 452 128 L 478 220 L 310 246 Z" fill="#FF873F" stroke="#1E1B4B" stroke-width="11" stroke-linejoin="round"/>
+                            <path d="M 290 184 L 353 163 L 369 237 L 310 246 Z" fill="#F5A24C" stroke="#1E1B4B" stroke-width="7"/>
+                            <path d="M 301 187 L 350 170 M 306 199 L 353 183 M 310 213 L 356 197 M 314 228 L 359 212" fill="none" stroke="#E45E2D" stroke-width="5"/>
+                            <ellipse cx="466" cy="174" rx="19" ry="48" fill="#F16E35" stroke="#1E1B4B" stroke-width="10"/>
+                            <ellipse cx="465" cy="174" rx="10" ry="33" fill="#FFF1DD" stroke="#1E1B4B" stroke-width="5"/>
+                            <path d="M 326 238 L 318 269 Q 319 279 330 274 L 349 245 Z" fill="#E96532" stroke="#1E1B4B" stroke-width="8" stroke-linejoin="round"/>
+                            <path d="M 303 181 L 351 164 L 356 178 L 307 195 Z" fill="#FFC078" opacity=".8" stroke="none"/>
+                        </g>
+                        <circle class="eye eye-left" cx="335" cy="375" r="62" fill="#FFFFFF" filter="url(#eye-shadow-panel)"/>
+                        <circle class="pupil pupil-left" cx="348" cy="375" r="26" fill="#1E1B4B"/><circle cx="340" cy="363" r="9" fill="#FFFFFF"/><circle cx="356" cy="383" r="4" fill="#FFFFFF"/>
+                        <circle class="eye eye-right" cx="465" cy="375" r="62" fill="#FFFFFF" filter="url(#eye-shadow-panel)"/>
+                        <circle class="pupil pupil-right" cx="452" cy="375" r="26" fill="#1E1B4B"/><circle cx="444" cy="363" r="9" fill="#FFFFFF"/><circle cx="460" cy="383" r="4" fill="#FFFFFF"/>
+                        <path d="M 378 455 Q 400 482 422 455" fill="none" stroke="#1E1B4B" stroke-width="11" stroke-linecap="round"/>
+                    </g>
+                </svg>
+            </div>
+        </section>
+
+        <section class="scenario-section" id="lista-escenarios" aria-labelledby="scenario-title">
+            <div class="section-title-row reveal">
+                <div><p class="eyebrow">Elige tu proximo reto</p><h2 id="scenario-title">Escenarios de practica</h2></div>
+                <span class="scenario-count">7 escenarios</span>
+            </div>
+            <div class="scenario-carousel" data-scenario-carousel aria-roledescription="carrusel">
+                <button class="scenario-carousel-control" type="button" data-scenario-previous aria-label="Ver escenarios anteriores" disabled>←</button>
+                <div class="scenario-carousel-track" data-scenario-track aria-label="Escenarios disponibles">
+                    <article class="scenario-card scenario-card-featured reveal reveal-delay-short">
+                        <span class="scenario-category-tag">Laboral</span>
+                        <div class="scenario-icon">↗</div><span class="scenario-tag">Recomendado</span>
+                        <h3>Entrevista de trabajo</h3><p>Prepárate para responder con claridad y seguridad.</p>
+                        <a class="scenario-action" href="{{ url_for('practice', scenario='entrevista') }}">Practicar <span aria-hidden="true">↗</span></a>
+                    </article>
+                    <article class="scenario-card reveal reveal-delay-medium">
+                        <span class="scenario-category-tag">Laboral</span>
+                        <div class="scenario-icon">◇</div><h3>Simulación profesional</h3><p>Practica conversaciones de tu futuro laboral.</p>
+                        <a class="scenario-action" href="{{ url_for('practice', scenario='simulacion-profesional') }}">Practicar <span aria-hidden="true">↗</span></a>
+                    </article>
+                    <article class="scenario-card reveal reveal-delay-medium">
+                        <span class="scenario-category-tag">Académica</span>
+                        <div class="scenario-icon">▱</div><h3>Presentación</h3><p>Comunica tus ideas frente a una audiencia.</p>
+                        <a class="scenario-action" href="{{ url_for('practice', scenario='presentacion') }}">Practicar <span aria-hidden="true">↗</span></a>
+                    </article>
+                    <article class="scenario-card reveal reveal-delay-medium">
+                        <span class="scenario-category-tag">Académica</span>
+                        <div class="scenario-icon">◫</div><h3>Exposición</h3><p>Explica un tema con ritmo y estructura.</p>
+                        <a class="scenario-action" href="{{ url_for('practice', scenario='exposicion') }}">Practicar <span aria-hidden="true">↗</span></a>
+                    </article>
+                    <article class="scenario-card reveal reveal-delay-short">
+                        <span class="scenario-category-tag">Académica</span>
+                        <div class="scenario-icon">?</div><h3>Preguntas y respuestas</h3><p>Entrena tu agilidad para responder mejor.</p>
+                        <a class="scenario-action" href="{{ url_for('practice', scenario='preguntas') }}">Practicar <span aria-hidden="true">↗</span></a>
+                    </article>
+                    <article class="scenario-card reveal reveal-delay-medium">
+                        <span class="scenario-category-tag">Académica</span>
+                        <div class="scenario-icon">≡</div><h3>Explicación de tema</h3><p>Haz sencillo lo complejo con tus palabras.</p>
+                        <a class="scenario-action" href="{{ url_for('practice', scenario='tema') }}">Practicar <span aria-hidden="true">↗</span></a>
+                    </article>
+                    <article class="scenario-card reveal reveal-delay-medium">
+                        <span class="scenario-category-tag">Académica</span>
+                        <div class="scenario-icon">∞</div><h3>Comunicación general</h3><p>Un espacio abierto para practicar cualquier idea que quieras expresar.</p>
+                        <a class="scenario-action" href="{{ url_for('practice', scenario='general') }}">Practicar <span aria-hidden="true">↗</span></a>
+                    </article>
+                </div>
+                <button class="scenario-carousel-control" type="button" data-scenario-next aria-label="Ver más escenarios">→</button>
+            </div>
+        </section>
+    </main>
+</div>
+{% endblock %}

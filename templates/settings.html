@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+
+{% block title %}Verbai | Ajustes{% endblock %}
+
+{% block content %}
+<div class="settings-shell">
+    <main class="settings-main">
+        <header class="settings-header">
+            <a class="dashboard-brand" href="{{ url_for('panel') }}" aria-label="Volver al panel"><img src="{{ url_for('static', filename='img/logo.svg') }}" alt="Verbai"></a>
+            <div class="history-header-actions">
+                <button class="theme-toggle" type="button" data-theme-toggle aria-label="Activar modo oscuro" aria-pressed="false"><span class="theme-icon theme-icon-sun" aria-hidden="true">☼</span><span class="theme-icon theme-icon-moon" aria-hidden="true">◐</span></button>
+                <a class="history-profile" href="{{ url_for('panel') }}">{{ user['name'][:1]|upper }}</a>
+            </div>
+        </header>
+        <section class="settings-intro reveal">
+            <a class="settings-back" href="{{ url_for('history') }}">← Volver a mi progreso</a>
+            <p class="eyebrow"><span class="eyebrow-dot"></span> Tu cuenta</p>
+            <h1>Ajustes de<br><em>tu espacio.</em></h1>
+            <p>Actualiza tus datos y mantén Verbai a tu medida.</p>
+        </section>
+        <section class="settings-card reveal reveal-delay-short" aria-labelledby="settings-title">
+            <div class="settings-card-heading"><div><p class="eyebrow">Perfil</p><h2 id="settings-title">Datos personales</h2></div><span class="settings-status">Cuenta activa</span></div>
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% for category, message in messages %}<p class="settings-message settings-message-{{ category }}">{{ message }}</p>{% endfor %}
+            {% endwith %}
+            <form method="post" class="settings-form">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <label>Nombre<input type="text" name="name" value="{{ user['name'] }}" required maxlength="80"></label>
+                <label>Correo electrónico<input type="email" value="{{ user['email'] }}" disabled></label>
+                <label>URL de foto de perfil <span>(opcional)</span><input type="url" name="avatar_url" value="{{ user['avatar_url'] or '' }}" placeholder="https://..."></label>
+                <fieldset class="avatar-style-fieldset">
+                    <legend>Personaje del perfil</legend>
+                    <div class="avatar-style-grid">
+                        <label class="avatar-style-choice {% if user['avatar_style'] == 'default' %}is-selected{% endif %}">
+                            <input type="radio" name="avatar_style" value="default" data-avatar-choice {% if user['avatar_style'] == 'default' %}checked{% endif %}>
+                            <span class="avatar-character avatar-character-default"><i></i></span><strong>Clásico</strong>
+                        </label>
+                        <label class="avatar-style-choice {% if user['avatar_style'] == 'sunset' %}is-selected{% endif %}">
+                            <input type="radio" name="avatar_style" value="sunset" data-avatar-choice {% if user['avatar_style'] == 'sunset' %}checked{% endif %}>
+                            <span class="avatar-character avatar-character-sunset"><i></i></span><strong>Atardecer</strong>
+                        </label>
+                        <label class="avatar-style-choice {% if user['avatar_style'] == 'ocean' %}is-selected{% endif %}">
+                            <input type="radio" name="avatar_style" value="ocean" data-avatar-choice {% if user['avatar_style'] == 'ocean' %}checked{% endif %}>
+                            <span class="avatar-character avatar-character-ocean"><i></i></span><strong>Marino</strong>
+                        </label>
+                        <label class="avatar-style-choice {% if user['avatar_style'] == 'forest' %}is-selected{% endif %}">
+                            <input type="radio" name="avatar_style" value="forest" data-avatar-choice {% if user['avatar_style'] == 'forest' %}checked{% endif %}>
+                            <span class="avatar-character avatar-character-forest"><i></i></span><strong>Selva</strong>
+                        </label>
+                    </div>
+                </fieldset>
+                <label>Estado del perfil
+                    <select name="status">
+                        <option value="active" {% if user['status'] == 'active' %}selected{% endif %}>Activo</option>
+                        <option value="inactive" {% if user['status'] == 'inactive' %}selected{% endif %}>Inactivo</option>
+                    </select>
+                </label>
+                <label>Nueva contraseña <span>(opcional)</span><input type="password" name="password" minlength="8" placeholder="Deja vacío para conservarla"></label>
+                <button class="button button-coral" type="submit">Guardar cambios <span aria-hidden="true">↗</span></button>
+            </form>
+        </section>
+        <section class="settings-card settings-preferences reveal reveal-delay-medium" aria-labelledby="preferences-title">
+            <div class="settings-card-heading"><div><p class="eyebrow">Preferencias</p><h2 id="preferences-title">Cómo quieres practicar</h2></div></div>
+            <div class="settings-preference-row"><div><strong>Apariencia</strong><span>Elige entre modo claro y oscuro.</span></div><button class="button button-outline" type="button" data-theme-toggle>Alternar tema</button></div>
+            <div class="settings-notifications" data-notification-settings data-user-id="{{ session['user_id'] }}">
+                <div class="settings-notifications-heading">
+                    <strong>Notificaciones</strong>
+                    <span>Elige qué avisos prefieres recibir.</span>
+                </div>
+                <div class="settings-notification-list">
+                    <label class="settings-notification-row">
+                        <span class="settings-notification-copy"><strong>Notificaciones push</strong><span>En este dispositivo</span></span>
+                        <input class="settings-switch" type="checkbox" role="switch" aria-label="Notificaciones push" data-notification-setting="push" checked>
+                    </label>
+                    <div class="settings-notification-separator" aria-hidden="true"></div>
+                    <label class="settings-notification-row">
+                        <span class="settings-notification-copy"><strong>Notificaciones por correo</strong><span>Novedades y avisos de tu cuenta</span></span>
+                        <input class="settings-switch" type="checkbox" role="switch" aria-label="Notificaciones por correo" data-notification-setting="email">
+                    </label>
+                    <div class="settings-notification-separator" aria-hidden="true"></div>
+                    <label class="settings-notification-row">
+                        <span class="settings-notification-copy"><strong>Notificaciones por SMS</strong><span>Avisos importantes por mensaje de texto</span></span>
+                        <input class="settings-switch" type="checkbox" role="switch" aria-label="Notificaciones por SMS" data-notification-setting="sms">
+                    </label>
+                </div>
+                <p class="settings-notifications-note">Estas opciones se guardan en este navegador. El envío de notificaciones push, correos y SMS aún no está conectado.</p>
+            </div>
+            <div class="settings-preference-row settings-danger"><div><strong>Sesión</strong><span>Salir de tu cuenta en este dispositivo.</span></div><a class="button button-outline" href="{{ url_for('logout') }}">Cerrar sesión</a></div>
+        </section>
+    </main>
+</div>
+{% endblock %}

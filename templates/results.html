@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+
+{% block title %}Verbai | Tus resultados{% endblock %}
+
+{% block content %}
+<main class="results-page">
+    <header class="results-header">
+        <a class="dashboard-brand" href="{{ url_for('panel') }}" aria-label="Volver al panel"><img src="{{ url_for('static', filename='img/logo.svg') }}" alt="Verbai"></a>
+        <div class="results-header-right"><button class="theme-toggle" type="button" data-theme-toggle aria-label="Activar modo oscuro" aria-pressed="false"><span class="theme-icon theme-icon-sun" aria-hidden="true">☼</span><span class="theme-icon theme-icon-moon" aria-hidden="true">◐</span></button><a href="{{ url_for('panel') }}" class="results-close" aria-label="Cerrar resultados">×</a></div>
+    </header>
+    <div class="results-container">
+        <div class="results-intro reveal"><p class="eyebrow"><span class="eyebrow-dot"></span> Sesion completada</p><h1>Esto es lo que<br><em>has construido.</em></h1><p>{{ practice_session['scenario'] if practice_session else 'Entrevista de trabajo' }} <span>·</span> Hoy</p></div>
+
+        <section class="results-score-row reveal reveal-delay-short" aria-labelledby="score-title">
+            <div class="score-card">
+                <div class="score-ring"><svg viewBox="0 0 180 180" aria-hidden="true"><circle class="score-track" cx="90" cy="90" r="76"></circle><circle class="score-progress" cx="90" cy="90" r="76"></circle></svg><div class="score-value"><strong>{{ analysis.get('score', practice_session['score'] if practice_session else 0) }}</strong><span>/ 100</span></div></div>
+                <div><p class="score-kicker">Puntuacion general</p><h2 id="score-title">Buen trabajo, {{ session.get('user_name', 'estudiante') }}.</h2><p class="score-description">Tu respuesta transmite seguridad y tiene una base muy clara para seguir creciendo.</p></div>
+            </div>
+            <div class="result-summary"><div><span class="summary-label">Duracion</span><strong>{{ '%02d:%02d'|format((practice_session['duration_seconds'] if practice_session else 0) // 60, (practice_session['duration_seconds'] if practice_session else 0) % 60) }}</strong></div><div><span class="summary-label">Escenario</span><strong>{{ practice_session['scenario'] if practice_session else 'Entrevista' }}</strong></div><div><span class="summary-label">Estado</span><strong class="summary-up">Analizado</strong></div></div>
+        </section>
+
+        <section class="metrics-section reveal reveal-delay-medium" aria-labelledby="metrics-title">
+            <div class="results-section-heading">
+                <div>
+                    <p class="eyebrow">Una mirada mas cercana</p>
+                    <h2 id="metrics-title">Tus metricas</h2>
+                </div>
+                <span class="metric-note">Basado en esta respuesta</span>
+            </div>
+
+            {% set metrics = [
+                ('clarity', 'Claridad', 'Tus ideas se entienden con facilidad.'),
+                ('organization', 'Organizacion', 'Tu respuesta tiene un buen orden.'),
+                ('coherence', 'Coherencia', 'Mantienes el hilo de tu mensaje.'),
+                ('vocabulary', 'Vocabulario', 'Usas palabras precisas y naturales.'),
+                ('fluency', 'Fluidez', 'Hay un ritmo comodo al hablar.'),
+                ('fillers', 'Muletillas', 'Mientras mas alto, menos muletillas detectadas.')
+            ] %}
+
+            <div class="metrics-grid">
+                {% for key, label, description in metrics %}
+                    <article class="metric-card{% if key == 'fillers' %} metric-card-warning{% endif %}">
+                        <div class="metric-heading">
+                            <h3>{{ label }}</h3>
+                            <strong>{{ analysis.get(key, 0) }}</strong>
+                        </div>
+                        <div class="metric-bar">
+                            <span data-fill="{{ analysis.get(key, 0) }}"></span>
+                        </div>
+                        <p>{{ description }}</p>
+                    </article>
+                {% endfor %}
+            </div>
+        </section>
+
+        <section class="results-lower-grid reveal" aria-label="Transcripcion y feedback">
+            <article class="transcript-card{% if not (practice_session and practice_session['transcript']) %} is-empty{% endif %}">
+                <div class="results-section-heading"><div><p class="eyebrow">Lo que dijiste</p><h2>Transcripcion</h2></div><span class="transcript-duration">{{ 'Audio analizado' if (practice_session and practice_session['transcript']) else 'Sin audio detectado' }}</span></div>
+                {% if practice_session and practice_session['transcript'] %}
+                    <p>{{ practice_session['transcript'] }}</p>
+                {% else %}
+                    <div class="results-empty-state">
+                        <div class="results-empty-icon" aria-hidden="true">◔</div>
+                        <h3>No escuché una respuesta clara.</h3>
+                        <p>Habla durante unos segundos y vuelve a intentarlo.</p>
+                    </div>
+                {% endif %}
+            </article>
+            <article class="feedback-card{% if not analysis.get('feedback') or analysis.get('score', 0) == 0 %} is-empty{% endif %}">
+                <div class="results-verbo-stage" data-verbo-stage aria-label="Verbo, tu asistente de retroalimentación">
+                    <span class="results-verbo-glow"></span>
+                    <img class="results-verbo-image" src="{{ url_for('static', filename='img/verbo.svg') }}" alt="Verbo saludando">
+                    <span class="results-verbo-spark results-verbo-spark-one">✦</span>
+                    <span class="results-verbo-spark results-verbo-spark-two">✦</span>
+                </div>
+                <div>
+                    <p class="eyebrow">Verbo dice</p>
+                    <h2>{{ 'Retroalimentacion real.' if analysis.get('score', 0) else 'Falta una respuesta real.' }}</h2>
+                    <p class="feedback-text">{{ analysis.get('feedback', 'Completa una practica para recibir retroalimentacion.') }}</p>
+                    <div class="feedback-tags"><span>+ Analisis IA</span><span>+ Tu progreso</span></div>
+                </div>
+            </article>
+        </section>
+
+        <div class="results-actions reveal"><a class="button button-coral" href="{{ url_for('practice') }}">Repetir practica <span aria-hidden="true">↗</span></a><a class="button button-outline" href="{{ url_for('history') }}">Ver historial <span aria-hidden="true">→</span></a></div>
+    </div>
+</main>
+{% endblock %}

@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+
+{% block title %}Verbai | Acceso{% endblock %}
+
+{% block content %}
+<main class="auth-page">
+    <div class="auth-decoration auth-decoration-top" aria-hidden="true"></div>
+    <div class="auth-decoration auth-decoration-bottom" aria-hidden="true"></div>
+    <a class="auth-brand" href="{{ url_for('landing') }}" aria-label="Volver al inicio de Verbai">
+        <img src="{{ url_for('static', filename='img/logo.svg') }}" alt="Verbai">
+    </a>
+    <div class="auth-top-actions">
+        <button class="theme-toggle" type="button" data-theme-toggle aria-label="Activar modo oscuro" aria-pressed="false">
+            <span class="theme-icon theme-icon-sun" aria-hidden="true">☼</span>
+            <span class="theme-icon theme-icon-moon" aria-hidden="true">◐</span>
+        </button>
+        <a class="auth-back" href="{{ url_for('landing') }}"><span aria-hidden="true">←</span> Volver al inicio</a>
+    </div>
+
+    <section class="auth-layout" aria-labelledby="auth-title">
+        <div class="auth-card reveal">
+            <div class="auth-heading">
+                <p class="eyebrow"><span class="eyebrow-dot"></span> Tu espacio de practica</p>
+                <h1 id="auth-title" data-auth-title>Bienvenido de vuelta.</h1>
+                <p data-auth-subtitle>Continua entrenando tu voz con Verbai.</p>
+            </div>
+
+            <div class="auth-tabs" role="tablist" aria-label="Tipo de acceso">
+                <button class="auth-tab is-active" type="button" role="tab" aria-selected="true" data-auth-tab="login">Iniciar sesion</button>
+                <button class="auth-tab" type="button" role="tab" aria-selected="false" data-auth-tab="register">Crear cuenta</button>
+            </div>
+
+            <div class="auth-social">
+                <a class="button button-outline button-google" href="{{ url_for('login_google') }}" aria-label="Iniciar sesion con Google">
+                    <span class="google-icon" aria-hidden="true">G</span>
+                    Continuar con Google
+                </a>
+            </div>
+
+            <div class="auth-divider" aria-hidden="true"><span>o</span></div>
+
+            <form class="auth-form" data-auth-form action="{{ url_for('login') }}" method="post">
+                <input type="hidden" name="mode" value="{{ auth_mode|default('login') }}" data-auth-mode>
+                <div class="field field-name" hidden>
+                    <label for="name">Nombre</label>
+                    <input id="name" name="name" type="text" autocomplete="name" placeholder="Tu nombre">
+                </div>
+                <div class="field">
+                    <label for="email">Correo electronico</label>
+                    <input id="email" name="email" type="email" autocomplete="email" placeholder="tu@correo.com" required>
+                </div>
+                <div class="field">
+                    <div class="field-label-row">
+                        <label for="password">Contrasena</label>
+                        <a href="{{ url_for('forgot_password') }}" data-login-only>¿La olvidaste?</a>
+                    </div>
+                    <input id="password" name="password" type="password" autocomplete="current-password" placeholder="Minimo 8 caracteres" minlength="8" required>
+                </div>
+                <label class="check-row" data-register-only hidden>
+                    <input type="checkbox" required>
+                    <span>Acepto crear mi espacio de practica en Verbai.</span>
+                </label>
+                <button class="button button-coral auth-submit" type="submit" data-auth-submit>Entrar a Verbai <span aria-hidden="true">↗</span></button>
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}<p class="auth-status auth-status-{{ category }}" role="status">{{ message }}</p>{% endfor %}
+                    {% else %}<p class="auth-status" data-auth-status role="status" aria-live="polite"></p>{% endif %}
+                {% endwith %}
+            </form>
+
+            <p class="auth-switch" data-auth-switch-copy>¿Todavia no tienes cuenta? <button type="button" data-auth-switch>Crear una cuenta</button></p>
+        </div>
+
+        <aside class="auth-companion reveal reveal-delay" aria-label="Verbo, asistente de Verbai">
+            <div class="companion-kicker"><span class="live-dot"></span> Tu asistente de practica</div>
+            <div class="companion-message">Hola, me alegra<br><em>verte por aqui.</em></div>
+            <div class="companion-verbo" data-verbo-stage>
+                <img class="verbo-image" src="{{ url_for('static', filename='img/verbo.svg') }}" alt="Verbo saludando">
+                <svg class="verbo-image verbo-legacy" aria-hidden="true" viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <filter id="soft-shadow" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="0" dy="10" stdDeviation="12" flood-color="#1E1B4B" flood-opacity="0.15"/></filter>
+                        <filter id="eye-shadow" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="4" stdDeviation="5" flood-color="#1E1B4B" flood-opacity="0.10"/></filter>
+                    </defs>
+                    <g id="verbai-mascot">
+                        <path d="M 215 420 Q 180 435 190 465 Q 205 480 225 450 Z" fill="#FF6B6B" filter="url(#soft-shadow)"/>
+                        <path d="M 585 410 C 625 365 650 380 635 415 C 620 445 575 440 575 430 Z" fill="#FF6B6B" filter="url(#soft-shadow)"/>
+                        <circle cx="400" cy="400" r="190" fill="#FF6B6B" filter="url(#soft-shadow)"/>
+                        <path d="M 220 440 A 190 190 0 0 0 580 440 A 190 190 0 0 1 220 440 Z" fill="#1E1B4B" opacity="0.08"/>
+                        <path d="M 264 267 Q 396 204 542 258 L 535 279 Q 398 230 272 286 Z" fill="#F4B544" stroke="#1E1B4B" stroke-width="9" stroke-linejoin="round"/>
+                        <g transform="rotate(-14 401 195)" filter="url(#soft-shadow)">
+                            <path d="M 290 184 L 452 128 L 478 220 L 310 246 Z" fill="#FF873F" stroke="#1E1B4B" stroke-width="11" stroke-linejoin="round"/>
+                            <path d="M 290 184 L 353 163 L 369 237 L 310 246 Z" fill="#F5A24C" stroke="#1E1B4B" stroke-width="7"/>
+                            <path d="M 301 187 L 350 170 M 306 199 L 353 183 M 310 213 L 356 197 M 314 228 L 359 212" fill="none" stroke="#E45E2D" stroke-width="5"/>
+                            <ellipse cx="466" cy="174" rx="19" ry="48" fill="#F16E35" stroke="#1E1B4B" stroke-width="10"/>
+                            <ellipse cx="465" cy="174" rx="10" ry="33" fill="#FFF1DD" stroke="#1E1B4B" stroke-width="5"/>
+                            <path d="M 326 238 L 318 269 Q 319 279 330 274 L 349 245 Z" fill="#E96532" stroke="#1E1B4B" stroke-width="8" stroke-linejoin="round"/>
+                            <path d="M 303 181 L 351 164 L 356 178 L 307 195 Z" fill="#FFC078" opacity=".8" stroke="none"/>
+                        </g>
+                        <circle class="eye eye-left" cx="335" cy="375" r="62" fill="#FFFFFF" filter="url(#eye-shadow)"/>
+                        <circle class="pupil pupil-left" cx="348" cy="375" r="26" fill="#1E1B4B"/><circle cx="340" cy="363" r="9" fill="#FFFFFF"/><circle cx="356" cy="383" r="4" fill="#FFFFFF"/>
+                        <circle class="eye eye-right" cx="465" cy="375" r="62" fill="#FFFFFF" filter="url(#eye-shadow)"/>
+                        <circle class="pupil pupil-right" cx="452" cy="375" r="26" fill="#1E1B4B"/><circle cx="444" cy="363" r="9" fill="#FFFFFF"/><circle cx="460" cy="383" r="4" fill="#FFFFFF"/>
+                        <path d="M 378 455 Q 400 482 422 455" fill="none" stroke="#1E1B4B" stroke-width="11" stroke-linecap="round"/>
+                    </g>
+                </svg>
+                <div class="verbo-shadow"></div>
+            </div>
+            <p class="companion-tip">Cada practica empieza<br>con un primer intento.</p>
+        </aside>
+    </section>
+</main>
+{% endblock %}
