@@ -893,6 +893,11 @@ def get_audio(session_id):
         abort(404)
     return send_from_directory(UPLOAD_DIR, os.path.basename(row["audio_path"]))
 
+@app.route('/robots.txt')
+def robots():
+    return "User-agent: *\nAllow: /", 200, {'Content-Type': 'text/plain'}
+    
+
 
 if __name__ == "__main__":
     app.run(
